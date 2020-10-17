@@ -36,6 +36,13 @@ ui <- navbarPage(
                  selectInput("geom", "geom", c("point", "column", "jitter")),
                  plotOutput("plot")
              )),
+    tabPanel("Plots",
+             fluidPage(
+                 selectInput("x", "X variable", choices = names(oecd)),
+                 selectInput("y", "Y variable", choices = names(oecd)),
+                 selectInput("geom", "geom", c("point", "column", "jitter")),
+                 plotOutput("plot2")
+             )),
     tabPanel("Discussion",
              titlePanel("Discussion Title"),
              p("Tour of the modeling choices you made and 
@@ -100,11 +107,12 @@ server <- function(input, output, session) {
                          label = LOCATION)) +
             plot_geom()
     }, res = 96)
+    
+    output$plot2 <- renderPlot({
+        ggplot(oecd, aes(x = SUBJECT, y = Value)) +
+            geom_text(aes(label = LOCATION))
+    }, res = 96)
 }
-
-oecd %>% 
-    ggplot(aes(x = SUBJECT, y = Value)) +
-    geom_text(aes(label = LOCATION))
 
 # Run the application 
 shinyApp(ui = ui, server = server)
